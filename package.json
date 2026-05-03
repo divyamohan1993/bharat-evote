@@ -17,5 +17,13 @@
     "cookie-parser": "^1.4.7"
   },
   "license": "MIT",
-  "author": "Ankit Saini <ankit.saini@shoolini.edu> | Capstone Mentor: Ms Ishani Sharma"
+  "author": "Ankit Saini <ankit.saini@shoolini.edu> | Capstone Mentor: Ms Ishani Sharma",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ankit2807-tech/bharat-evote.git"
+  },
+  "homepage": "https://bharat-evote.dmj.one",
+  "bugs": {
+    "url": "https://github.com/ankit2807-tech/bharat-evote/issues"
+  }
 }
