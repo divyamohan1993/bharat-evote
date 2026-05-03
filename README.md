@@ -92,7 +92,7 @@ bharat-evote/
 
 - **In-memory state** is intentional. It resets on cold start so reviewers can replay the entire flow without database setup. Production swaps `src/store.js` for a Cloud Spanner module behind the same interface.
 - **OTPs** are returned in the demo response so reviewers can complete the flow without an SMS gateway. A single conditional gates this behind `NODE_ENV === 'production'` for a real deployment.
-- **Crypto** is AES-256-GCM today. The roadmap calls for ML-KEM-768 + X25519 hybrid plus ML-DSA-65 Merkle-root signatures — see report §11.2.
+- **Crypto** is AES-256-GCM today. The roadmap calls for ML-KEM-768 + X25519 hybrid plus ML-DSA-65 Merkle-root signatures in future — see report §11.2.
 - **PII never enters logs**. Voter IDs are masked in OTP-issuance log lines.
 
 ## License
