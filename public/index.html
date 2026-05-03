@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FF9933" />
+<meta name="color-scheme" content="light dark" />
+<title>Bharat eVote — Online Voting System for Indian Elections</title>
+<meta name="description" content="A capstone-grade remote voting system for Indian elections. WCAG 2.2 AAA. Bilingual. Cryptographically auditable. Cloud Run, scale-to-zero, asia-east1." />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="canonical" href="/" />
+<meta property="og:title" content="Bharat eVote" />
+<meta property="og:description" content="Vote from anywhere. Verify everything. A capstone-grade remote voting system for Indian elections." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="/icons/icon.svg" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Bharat eVote","applicationCategory":"GovernmentApplication","operatingSystem":"Web","author":{"@type":"Person","name":"Ankit Saini"},"educationalUse":"capstone","inLanguage":["en","hi"]}
+</script>
+<link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav" role="banner">
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="Bharat eVote home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span data-i18n="brand">Bharat eVote</span>
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools">
+      <button class="lang-toggle" type="button" aria-label="Switch language">EN</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-inner">
+      <span class="eyebrow" data-i18n="hero.eyebrow">Capstone Project — Shoolini University</span>
+      <h1 id="hero-title" data-i18n="hero.title">Vote from anywhere. Verify everything.</h1>
+      <p class="lede" data-i18n="hero.lede">A remote, auditable, accessible voting system for Indian elections — engineered for slow phones, weak networks and small towns.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/auth.html" data-i18n="hero.primary">Cast a demo vote</a>
+        <a class="btn btn-saffron" href="/results.html" data-i18n="hero.secondary">View live results</a>
+        <a class="btn btn-ghost" href="/report/" data-i18n="hero.tertiary">Read the report</a>
+        <a class="btn btn-ghost" href="/pitch/" data-i18n="hero.pitch">View the pitch</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="features-title">
+    <div class="wrap">
+      <h2 id="features-title" data-i18n="features.title">Why this exists</h2>
+      <p class="sub" data-i18n="features.sub">Built for the third of India that the polling booth misses.</p>
+      <div class="grid cards-3">
+        <article class="card">
+          <h3 data-i18n="features.f1_t">Migrants, elders, persons with disabilities</h3>
+          <p data-i18n="features.f1_p">Eligible voters who cannot reach their home polling station get a credentialled remote channel.</p>
+        </article>
+        <article class="card">
+          <h3 data-i18n="features.f2_t">Cryptographic receipts</h3>
+          <p data-i18n="features.f2_p">Every ballot returns a Merkle root receipt. Anyone can verify it against the public root.</p>
+        </article>
+        <article class="card">
+          <h3 data-i18n="features.f3_t">WCAG 2.2 AAA, bilingual</h3>
+          <p data-i18n="features.f3_p">English and हिन्दी, screen-reader-first, keyboard-first, reduced-motion respected.</p>
+        </article>
+        <article class="card">
+          <h3 data-i18n="features.f4_t">Cloud Run, scale-to-zero</h3>
+          <p data-i18n="features.f4_p">Single container, asia-east1, sub-second cold start, idle cost zero.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="stats-title">
+    <div class="wrap">
+      <h2 id="stats-title" data-i18n="stats.title">What's in the demo</h2>
+      <div class="grid cards-4" id="stats">
+        <div class="card"><span class="tag" data-i18n="stats.voters">Demo voters</span><div class="num" id="s-voters">—</div></div>
+        <div class="card"><span class="tag" data-i18n="stats.constituencies">Constituencies</span><div class="num" id="s-cons">—</div></div>
+        <div class="card"><span class="tag" data-i18n="stats.parties">Parties</span><div class="num" id="s-parties">—</div></div>
+        <div class="card"><span class="tag" data-i18n="stats.ballots">Ballots cast</span><div class="num" id="s-ballots">—</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div data-i18n="common.by">Capstone of Ankit Saini</div>
+      <div class="muted" data-i18n="common.mentor">Mentored by dmj.one</div>
+    </div>
+    <div class="muted" data-i18n="common.powered">Built end-to-end on Cloud Run</div>
+  </div>
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+(async () => {
+  await window.BE.boot;
+  try {
+    const h = await BE.api('/health');
+    document.getElementById('s-voters').textContent = BE.fmtInt(h.voters);
+    document.getElementById('s-cons').textContent = BE.fmtInt(h.election.constituencies);
+    document.getElementById('s-parties').textContent = BE.fmtInt(h.election.parties);
+    document.getElementById('s-ballots').textContent = BE.fmtInt(h.ballots);
+  } catch {}
+})();
+</script>
+</body>
+</html>

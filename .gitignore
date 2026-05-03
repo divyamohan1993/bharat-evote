@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log*
+CAPSTONE PROJECT REPORT.docx
+idea.md
+.env
+.env.local
+.DS_Store
+_docx_extract/
+*.log
+.cache/
+dist/
+build/
+coverage/
+.idea/
+.vscode/

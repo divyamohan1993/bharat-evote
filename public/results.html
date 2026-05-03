@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#FF9933" />
+<title>Live results — Bharat eVote</title>
+<meta name="description" content="Real-time tally of party seats, popular vote and constituency winners." />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <h1 data-i18n="results.title">Live results</h1>
+  <p class="muted" data-i18n="results.sub">Recomputed on every request from the encrypted ballot box.</p>
+
+  <div class="grid cards-4" style="margin: 14px 0 22px">
+    <div class="card"><span class="tag" data-i18n="results.total">Total ballots</span><div class="num" id="total">—</div></div>
+    <div class="card"><span class="tag" data-i18n="stats.constituencies">Constituencies</span><div class="num" id="cons">—</div></div>
+    <div class="card"><span class="tag" data-i18n="stats.parties">Parties</span><div class="num" id="parties">—</div></div>
+    <div class="card"><span class="tag" data-i18n="stats.voters">Voters</span><div class="num" id="voters">—</div></div>
+  </div>
+
+  <section aria-labelledby="party-h" class="card">
+    <h2 id="party-h" style="margin-top:0" data-i18n="results.by_party">Vote share by party</h2>
+    <div id="party-bars"></div>
+  </section>
+
+  <section aria-labelledby="seat-h" class="card" style="margin-top:18px">
+    <h2 id="seat-h" style="margin-top:0" data-i18n="results.seat_tally">Seat tally</h2>
+    <div id="seat-bars"></div>
+  </section>
+
+  <section aria-labelledby="con-h" class="card" style="margin-top:18px">
+    <div class="between" style="margin-bottom:10px">
+      <h2 id="con-h" style="margin:0">By constituency</h2>
+      <input id="q" class="input" data-i18n-attr="placeholder:results.search_ph" placeholder="Search constituency, state, code..." style="max-width:320px" />
+    </div>
+    <div style="overflow:auto">
+      <table class="t" id="con-tbl">
+        <thead><tr><th>Code</th><th>Constituency</th><th>State</th><th>Winner</th><th>Party</th><th>Votes</th><th></th></tr></thead>
+        <tbody id="con-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+<script src="/js/app.js"></script>
+<script>
+let parties = [], constituencies = [], partyMap = {}, candMap = {};
+async function refresh() {
+  try {
+    const [h, r] = await Promise.all([BE.api('/health'), BE.api('/api/results')]);
+    document.getElementById('total').textContent   = BE.fmtInt(r.total);
+    document.getElementById('cons').textContent    = BE.fmtInt(h.election.constituencies);
+    document.getElementById('parties').textContent = BE.fmtInt(h.election.parties);
+    document.getElementById('voters').textContent  = BE.fmtInt(h.voters);
+
+    const pBox = document.getElementById('party-bars');
+    pBox.replaceChildren();
+    const total = Math.max(1, r.total);
+    const partyEntries = Object.entries(r.byParty).sort((a, b) => b[1] - a[1]);
+    if (partyEntries.length === 0) {
+      pBox.append(BE.el('p', { class: 'muted' }, BE.t('results.no_data')));
+    } else {
+      for (const [pid, n] of partyEntries) {
+        const p = partyMap[pid] || { name: pid, color: '#666' };
+        const pct = (n / total * 100).toFixed(1);
+        pBox.append(
+          BE.el('div', { style: 'margin:8px 0' },
+            BE.el('div', { class: 'between', style: 'margin-bottom:4px' },
+              BE.el('span', null, `${p.symbol || ''} ${p.name} (${p.short || pid})`),
+              BE.el('span', { class: 'mono' }, `${BE.fmtInt(n)} · ${pct}%`)
+            ),
+            BE.el('div', { class: 'bar' }, BE.el('span', { style: `width:${pct}%; background:${p.color || '#666'}` }))
+          )
+        );
+      }
+    }
+
+    const sBox = document.getElementById('seat-bars');
+    sBox.replaceChildren();
+    const seatTotal = Math.max(1, Object.keys(r.seats).length);
+    const seatEntries = Object.entries(r.partySeats).sort((a, b) => b[1] - a[1]);
+    for (const [pid, n] of seatEntries) {
+      const p = partyMap[pid] || { name: pid, color: '#666' };
+      const pct = (n / seatTotal * 100).toFixed(1);
+      sBox.append(
+        BE.el('div', { style: 'margin:8px 0' },
+          BE.el('div', { class: 'between', style: 'margin-bottom:4px' },
+            BE.el('span', null, `${p.symbol || ''} ${p.name} (${p.short || pid})`),
+            BE.el('span', { class: 'mono' }, `${BE.fmtInt(n)} seats`)
+          ),
+          BE.el('div', { class: 'bar' }, BE.el('span', { style: `width:${pct}%; background:${p.color || '#666'}` }))
+        )
+      );
+    }
+
+    renderConstituencies(r.seats);
+  } catch (e) {
+    BE.toast(e.message, 'bad');
+  }
+}
+
+function renderConstituencies(seats) {
+  const q = (document.getElementById('q').value || '').toLowerCase();
+  const tbody = document.getElementById('con-body');
+  tbody.replaceChildren();
+  const rows = constituencies
+    .filter(c => !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || c.state.toLowerCase().includes(q))
+    .slice(0, 200);
+  for (const c of rows) {
+    const winner = seats[c.code];
+    const cand = winner ? candMap[winner.candidate_id] : null;
+    const party = winner ? partyMap[winner.party_id] : null;
+    tbody.append(
+      BE.el('tr', null,
+        BE.el('td', { class: 'mono' }, c.code),
+        BE.el('td', null, c.name),
+        BE.el('td', null, c.state),
+        BE.el('td', null, cand?.name || '—'),
+        BE.el('td', null, party ? `${party.symbol} ${party.short}` : '—'),
+        BE.el('td', { class: 'mono' }, winner ? BE.fmtInt(winner.votes) : '—'),
+        BE.el('td', null, BE.el('a', { class: 'btn btn-ghost btn-sm', href: '#', onClick: (e) => { e.preventDefault(); openSeat(c.code); } }, BE.t('results.view_seat')))
+      )
+    );
+  }
+}
+
+async function openSeat(code) {
+  try {
+    const r = await BE.api('/api/results/constituency/' + code);
+    const lines = [`${code} — ${r.total} votes`].concat(r.items.map(i => `  ${i.name} (${i.party_id}) — ${i.votes}`));
+    BE.toast(lines.join('\n'), 'good');
+  } catch (e) { BE.toast(e.message, 'bad'); }
+}
+
+(async () => {
+  parties = await BE.api('/api/election/parties');
+  partyMap = Object.fromEntries(parties.map(p => [p.id, p]));
+  const allCands = await BE.api('/api/election/candidates');
+  candMap = Object.fromEntries(allCands.items.map(c => [c.id, c]));
+  const cons = await BE.api('/api/election/constituencies');
+  constituencies = cons.items;
+  document.getElementById('q').addEventListener('input', () => renderConstituencies(window.__seats || {}));
+  await refresh();
+  setInterval(refresh, 5000);
+})();
+</script>
+</body>
+</html>

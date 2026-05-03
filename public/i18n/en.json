@@ -1,0 +1,110 @@
+{
+  "lang_name": "English",
+  "brand": "Bharat eVote",
+  "tagline": "An online voting system for Indian elections.",
+  "nav": {
+    "home": "Home",
+    "vote": "Vote",
+    "results": "Results",
+    "audit": "Audit",
+    "admin": "Admin",
+    "report": "Report",
+    "pitch": "Pitch"
+  },
+  "hero": {
+    "eyebrow": "Capstone Project — Shoolini University",
+    "title": "Vote from anywhere. Verify everything.",
+    "lede": "A remote, auditable, accessible voting system for Indian elections — engineered for slow phones, weak networks and small towns.",
+    "primary": "Cast a demo vote",
+    "secondary": "View live results",
+    "tertiary": "Read the report",
+    "pitch": "View the pitch"
+  },
+  "features": {
+    "title": "Why this exists",
+    "sub": "Built for the third of India that the polling booth misses.",
+    "f1_t": "Migrants, elders, persons with disabilities",
+    "f1_p": "Eligible voters who cannot reach their home polling station get a credentialled remote channel.",
+    "f2_t": "Cryptographic receipts",
+    "f2_p": "Every ballot returns a Merkle root receipt. Anyone can verify it against the public root.",
+    "f3_t": "WCAG 2.2 AAA, bilingual",
+    "f3_p": "English and हिन्दी, screen-reader-first, keyboard-first, reduced-motion respected.",
+    "f4_t": "Cloud Run, scale-to-zero",
+    "f4_p": "Single container, asia-east1, sub-second cold start, idle cost zero."
+  },
+  "stats": {
+    "title": "What's in the demo",
+    "voters": "Demo voters",
+    "constituencies": "Constituencies",
+    "parties": "Parties",
+    "ballots": "Ballots cast"
+  },
+  "auth": {
+    "title": "Sign in to vote",
+    "sub": "Enter your Voter ID. We will send a one-time password.",
+    "voter_id": "Voter ID",
+    "voter_id_ph": "e.g. DL010001",
+    "lookup": "Look up sample IDs",
+    "request": "Send OTP",
+    "otp": "One-time password",
+    "otp_ph": "6-character code",
+    "verify": "Verify and continue",
+    "demo_otp": "For this demo your OTP is shown directly:",
+    "again": "Try a different voter ID"
+  },
+  "vote": {
+    "title": "Your ballot",
+    "sub": "Pick one candidate. You cannot change your vote after submission.",
+    "constituency": "Constituency",
+    "voter": "Voter",
+    "submit": "Cast my vote",
+    "confirm_title": "Confirm your vote",
+    "confirm_body": "You are about to vote for {name} ({party}). This is final and anonymous.",
+    "confirm_yes": "Yes, cast vote",
+    "confirm_no": "Go back",
+    "submitted_title": "Vote recorded",
+    "submitted_body": "Your ballot is sealed and your receipt is below. Save it to verify inclusion later.",
+    "ballot_id": "Ballot ID",
+    "merkle": "Merkle root after your vote",
+    "ts": "Timestamp",
+    "alg": "Cipher",
+    "view_results": "View live results"
+  },
+  "results": {
+    "title": "Live results",
+    "sub": "Recomputed on every request from the encrypted ballot box.",
+    "total": "Total ballots",
+    "by_party": "Vote share by party",
+    "seat_tally": "Seat tally (winners by constituency)",
+    "search_ph": "Search constituency, state, code…",
+    "view_seat": "View seat",
+    "no_data": "No ballots yet. Start by casting one."
+  },
+  "audit": {
+    "title": "Public audit",
+    "sub": "Inspect the Merkle root, the latest leaves and recent ciphertext ballots.",
+    "root": "Current Merkle root",
+    "size": "Audit log size",
+    "tail": "Latest leaves",
+    "ballots": "Recent ciphertexts"
+  },
+  "admin": {
+    "title": "Admin console",
+    "sub": "SIEM-style operational view. Phase control, log feed, system stats.",
+    "token": "Admin token",
+    "login": "Sign in",
+    "stats": "System stats",
+    "logs": "Live logs",
+    "phase": "Election phase"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Retry",
+    "close": "Close",
+    "cancel": "Cancel",
+    "search": "Search",
+    "powered": "Built end-to-end on Cloud Run · scale-to-zero · asia-east1",
+    "by": "Capstone of Ankit Saini · GF202215717 · B.Tech CSE Data Science · Shoolini University",
+    "mentor": "Mentored by dmj.one"
+  }
+}

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Public audit — Bharat eVote</title>
+<meta name="description" content="Inspect the Merkle root, latest leaves and recent ciphertext ballots." />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <h1 data-i18n="audit.title">Public audit</h1>
+  <p class="muted" data-i18n="audit.sub">Inspect the Merkle root, latest leaves and recent ciphertext ballots.</p>
+
+  <div class="grid cards-3" style="margin: 14px 0 18px">
+    <div class="card">
+      <span class="tag" data-i18n="audit.root">Current Merkle root</span>
+      <div class="mono" id="root" style="font-size:13px; word-break:break-all; margin-top:10px">—</div>
+    </div>
+    <div class="card">
+      <span class="tag" data-i18n="audit.size">Audit log size</span>
+      <div class="num" id="size">—</div>
+    </div>
+    <div class="card">
+      <span class="tag">Updated</span>
+      <div class="num" id="upd" style="font-size:18px">—</div>
+    </div>
+  </div>
+
+  <section class="card" aria-labelledby="tail-h">
+    <h2 id="tail-h" style="margin-top:0" data-i18n="audit.tail">Latest leaves</h2>
+    <div id="tail" class="mono" style="font-size:12px; line-height:1.7; word-break: break-all"></div>
+  </section>
+
+  <section class="card" aria-labelledby="bal-h" style="margin-top:18px">
+    <h2 id="bal-h" style="margin-top:0" data-i18n="audit.ballots">Recent ciphertexts</h2>
+    <div style="overflow:auto">
+      <table class="t" id="bal-tbl">
+        <thead><tr><th>Ballot ID</th><th>Time</th><th>Cipher</th><th>Root after</th></tr></thead>
+        <tbody id="bal-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+<script src="/js/app.js"></script>
+<script>
+async function refresh() {
+  try {
+    const [root, tail, bals] = await Promise.all([
+      BE.api('/api/audit/root'),
+      BE.api('/api/audit/tail?n=20'),
+      BE.api('/api/audit/ballots?n=50')
+    ]);
+    document.getElementById('root').textContent = root.root;
+    document.getElementById('size').textContent = BE.fmtInt(root.size);
+    document.getElementById('upd').textContent = new Date().toLocaleTimeString();
+    const t = document.getElementById('tail');
+    t.replaceChildren();
+    tail.items.forEach((h, i) => t.append(BE.el('div', null, `${BE.fmtInt(root.size - tail.items.length + i + 1)}. ${h}`)));
+    const b = document.getElementById('bal-body');
+    b.replaceChildren();
+    for (const x of bals.items) {
+      b.append(BE.el('tr', null,
+        BE.el('td', { class: 'mono', style: 'font-size:12px' }, x.id),
+        BE.el('td', null, new Date(x.ts).toLocaleString()),
+        BE.el('td', { class: 'mono', style: 'font-size:11px; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap' }, x.cipher.ct.slice(0, 32) + '…'),
+        BE.el('td', { class: 'mono', style: 'font-size:11px' }, (x.root_after || '').slice(0, 16) + '…')
+      ));
+    }
+  } catch (e) { BE.toast(e.message, 'bad'); }
+}
+refresh();
+setInterval(refresh, 4000);
+</script>
+</body>
+</html>

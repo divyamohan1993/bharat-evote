@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+_docx_extract
+*.docx
+.env
+.DS_Store
+*.log

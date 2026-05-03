@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#FF9933" />
+<title>Sign in to vote — Bharat eVote</title>
+<meta name="description" content="Sign in with your Voter ID and OTP to cast your demo vote." />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main" class="wrap-narrow">
+  <h1 data-i18n="auth.title">Sign in to vote</h1>
+  <p class="muted" data-i18n="auth.sub">Enter your Voter ID. We will send a one-time password.</p>
+
+  <section class="card" aria-labelledby="auth-step1" id="step1">
+    <h2 id="auth-step1" data-i18n="auth.title" style="font-size:18px;margin-top:0">Sign in to vote</h2>
+    <div class="field">
+      <label for="vid" data-i18n="auth.voter_id">Voter ID</label>
+      <input id="vid" class="input mono" autocomplete="username" autocapitalize="characters" inputmode="latin"
+             data-i18n-attr="placeholder:auth.voter_id_ph" placeholder="e.g. DL010001" maxlength="12" />
+      <div class="row">
+        <button class="btn btn-primary" id="btn-otp" type="button" data-i18n="auth.request">Send OTP</button>
+        <button class="btn btn-ghost btn-sm" id="btn-sample" type="button" data-i18n="auth.lookup">Look up sample IDs</button>
+      </div>
+    </div>
+    <div id="sample" class="muted" hidden></div>
+  </section>
+
+  <section class="card" aria-labelledby="auth-step2" id="step2" hidden style="margin-top:14px">
+    <h2 id="auth-step2" style="font-size:18px;margin-top:0" data-i18n="auth.otp">One-time password</h2>
+    <div id="demo-otp-box" class="alert alert-warn" hidden></div>
+    <div class="field">
+      <label for="otp" data-i18n="auth.otp">One-time password</label>
+      <input id="otp" class="input mono" autocomplete="one-time-code" inputmode="latin" maxlength="6"
+             data-i18n-attr="placeholder:auth.otp_ph" placeholder="6-character code" />
+      <div class="row">
+        <button class="btn btn-green" id="btn-verify" type="button" data-i18n="auth.verify">Verify and continue</button>
+        <button class="btn btn-ghost btn-sm" id="btn-restart" type="button" data-i18n="auth.again">Try a different voter ID</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+<script src="/js/app.js"></script>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  $('btn-sample').addEventListener('click', async () => {
+    try {
+      const list = await BE.api('/api/voters/sample');
+      const box = $('sample');
+      box.hidden = false;
+      box.textContent = '';
+      const tbl = BE.el('table', { class: 't' },
+        BE.el('thead', null, BE.el('tr', null,
+          BE.el('th', null, 'Voter ID'),
+          BE.el('th', null, 'Name'),
+          BE.el('th', null, 'Constituency'),
+          BE.el('th', null, '')
+        )),
+        BE.el('tbody', null, ...list.map(v => BE.el('tr', null,
+          BE.el('td', { class: 'mono' }, v.voter_id),
+          BE.el('td', null, v.name),
+          BE.el('td', null, `${v.constituency_code} · ${v.state}`),
+          BE.el('td', null, BE.el('button', { class: 'btn btn-ghost btn-sm', type: 'button',
+            onClick: () => { $('vid').value = v.voter_id; $('vid').focus(); } }, 'Use'))
+        )))
+      );
+      box.appendChild(tbl);
+    } catch (e) { BE.toast(e.message, 'bad'); }
+  });
+
+  $('btn-otp').addEventListener('click', async () => {
+    const id = $('vid').value.trim().toUpperCase();
+    if (!id) return BE.toast('Enter your Voter ID', 'warn');
+    try {
+      const r = await BE.api('/api/auth/request-otp', { method: 'POST', body: { voter_id: id } });
+      $('step2').hidden = false;
+      const box = $('demo-otp-box');
+      box.hidden = false;
+      box.textContent = `${BE.t('auth.demo_otp')} ${r.otp_demo}`;
+      $('otp').focus();
+    } catch (e) { BE.toast(e.message, 'bad'); }
+  });
+
+  $('btn-verify').addEventListener('click', async () => {
+    const id = $('vid').value.trim().toUpperCase();
+    const otp = $('otp').value.trim().toUpperCase();
+    try {
+      await BE.api('/api/auth/verify-otp', { method: 'POST', body: { voter_id: id, otp } });
+      location.href = '/vote.html';
+    } catch (e) { BE.toast(e.message, 'bad'); }
+  });
+
+  $('btn-restart').addEventListener('click', () => {
+    $('step2').hidden = true;
+    $('vid').value = '';
+    $('otp').value = '';
+    $('vid').focus();
+  });
+})();
+</script>
+</body>
+</html>

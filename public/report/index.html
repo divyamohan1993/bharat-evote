@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#FF9933" />
+<title>Bharat eVote — Capstone Report</title>
+<meta name="description" content="Capstone project report — Bharat eVote — Ankit Saini, B.Tech CSE Data Science, Shoolini University." />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+<style>
+.report-grid { display: grid; gap: 32px; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+@media (max-width: 880px) { .report-grid { grid-template-columns: 1fr; } .toc { position: static !important; } }
+.toc {
+  position: sticky; top: 80px; align-self: start;
+  border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+  background: var(--paper); max-height: calc(100vh - 100px); overflow-y: auto;
+}
+.toc h2 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 10px; }
+.toc a { display: block; padding: 6px 8px; border-radius: 8px; text-decoration: none; color: var(--ink); font-size: 14px; line-height: 1.4; }
+.toc a:hover { background: var(--paper-2); }
+.toc a.active { background: var(--paper-2); font-weight: 700; }
+.title-page {
+  border: 1px solid var(--line); border-radius: 18px; padding: 36px; text-align: center;
+  background:
+    radial-gradient(800px 400px at 0% 0%, rgba(255,153,51,.08), transparent 60%),
+    radial-gradient(800px 400px at 100% 100%, rgba(19,136,8,.08), transparent 60%),
+    var(--paper);
+}
+.title-page h1 { margin: 8px 0 4px; font-size: clamp(2rem, 1.4rem + 2vw, 3.2rem); line-height: 1.05; letter-spacing: -0.02em; }
+.title-page .sub { color: var(--ink-2); margin: 0 0 22px; font-size: clamp(1rem, 1vw + 0.4rem, 1.2rem); }
+.title-page .meta-grid { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; max-width: 520px; margin: 16px auto; text-align: left; font-size: 14px; }
+.title-page .meta-grid dt { font-weight: 700; color: var(--ink-2); }
+.title-page .meta-grid dd { margin: 0; }
+.section-h h2 { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.8rem); margin: 32px 0 12px; letter-spacing: -0.01em; scroll-margin-top: 80px; }
+.section-h h3 { font-size: 1.15rem; margin: 16px 0 6px; color: var(--ink); }
+.section-h h4 { font-size: 1rem; margin: 12px 0 4px; color: var(--ink-2); }
+.section-h p { color: var(--ink); line-height: 1.65; max-width: 75ch; }
+.section-h ul { line-height: 1.7; padding-left: 1.2em; }
+.section-h pre.code { background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: 12px; line-height: 1.5; }
+.dl-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.tricolor-print { height: 4px; background: linear-gradient(90deg, var(--saffron) 0 33%, #fff 33% 66%, var(--green) 66% 100%); margin: 28px 0; }
+@media print {
+  .toc, .nav, footer { display: none !important; }
+  .report-grid { display: block; padding: 0; }
+  .title-page { box-shadow: none; border: 0; padding: 0; page-break-after: always; }
+  .section-h h2 { page-break-before: avoid; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav no-print">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" aria-current="page" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="report-grid">
+    <aside class="toc no-print" aria-label="Table of contents">
+      <h2>Table of contents</h2>
+      <nav id="toc-nav"></nav>
+    </aside>
+    <article class="section-h" id="report-body">
+      <div class="muted" id="loading">Loading report&hellip;</div>
+    </article>
+  </div>
+</main>
+
+<footer class="no-print"><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+
+<script src="/js/app.js"></script>
+<script>
+function el(tag, props, ...children) {
+  const e = document.createElement(tag);
+  const p = props || {};
+  for (const [k, v] of Object.entries(p)) {
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else e.setAttribute(k, v);
+  }
+  for (const c of children.flat()) {
+    if (c == null) continue;
+    e.append(c instanceof Node ? c : document.createTextNode(c));
+  }
+  return e;
+}
+
+(async () => {
+  let data;
+  try { data = await BE.api('/report/data'); }
+  catch (e) { document.getElementById('loading').textContent = 'Failed to load report: ' + e.message; return; }
+
+  const { meta, sections } = data;
+  const body = document.getElementById('report-body');
+  const tocNav = document.getElementById('toc-nav');
+
+  // Title page
+  body.replaceChildren();
+  body.append(
+    el('section', { class: 'title-page', 'aria-labelledby': 'pt-title' },
+      el('div', { style: 'font-size:12px; letter-spacing:.14em; text-transform:uppercase; color: var(--ink-2)' }, `${meta.institution}`),
+      el('h1', { id: 'pt-title' }, meta.titleLine1),
+      el('p', { class: 'sub' }, meta.titleLine2),
+      el('div', { class: 'tricolor-print' }),
+      el('p', null, 'Synopsis submitted for the partial fulfilment of the degree of'),
+      el('p', { style: 'font-weight:700; letter-spacing:.06em' }, 'BACHELOR OF TECHNOLOGY (CSE — DATA SCIENCE)'),
+      el('dl', { class: 'meta-grid' },
+        el('dt', null, 'Name of Student'), el('dd', null, meta.student),
+        el('dt', null, 'Registration Number'), el('dd', null, meta.registration),
+        el('dt', null, 'Course with Specialization'), el('dd', null, meta.course),
+        el('dt', null, 'Semester'), el('dd', null, meta.semester),
+        el('dt', null, 'Capstone Mentor'), el('dd', null, meta.mentor),
+        el('dt', null, 'School'), el('dd', null, meta.institution),
+        el('dt', null, 'University'), el('dd', null, meta.university),
+        el('dt', null, 'Submitted'), el('dd', null, meta.submitted_on)
+      ),
+      el('div', { class: 'dl-bar no-print' },
+        el('a', { class: 'btn btn-primary', href: '/report/download.docx', download: '' }, 'Download .docx'),
+        el('a', { class: 'btn btn-saffron', href: '/report/download.md', download: '' }, 'Download .md'),
+        el('button', { class: 'btn btn-ghost', type: 'button', onClick: () => window.print() }, 'Print'),
+        el('a', { class: 'btn btn-ghost', href: '/pitch/' }, 'Open pitch deck')
+      )
+    )
+  );
+
+  // TOC + sections
+  for (const sec of sections) {
+    tocNav.append(el('a', { href: '#' + sec.id }, sec.title));
+    const wrap = el('section', { id: sec.id, 'aria-labelledby': sec.id + '-h' });
+    wrap.append(el('h2', { id: sec.id + '-h' }, sec.title));
+    for (const b of sec.blocks) {
+      if (b.type === 'h2') wrap.append(el('h3', null, b.text));
+      else if (b.type === 'h3') wrap.append(el('h4', null, b.text));
+      else if (b.type === 'bullet') wrap.append(el('ul', null, ...b.items.map(t => el('li', null, t))));
+      else if (b.type === 'code') wrap.append(el('pre', { class: 'code' }, b.text));
+      else wrap.append(el('p', null, b.text || ''));
+    }
+    body.append(wrap);
+  }
+
+  // Active TOC link on scroll
+  const obs = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        document.querySelectorAll('#toc-nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    }
+  }, { rootMargin: '-30% 0px -65% 0px' });
+  document.querySelectorAll('#report-body section[id]').forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>

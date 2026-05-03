@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#FF9933" />
+<title>Cast your vote — Bharat eVote</title>
+<meta name="description" content="Choose a candidate and cast your sealed ballot." />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+<style>
+.cand-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.cand {
+  display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--paper); cursor: pointer;
+  transition: transform 120ms, border-color 120ms, box-shadow 120ms;
+}
+.cand:hover { border-color: var(--gold); box-shadow: var(--shadow); }
+.cand[aria-checked="true"] { border-color: var(--green); background: color-mix(in srgb, var(--green) 6%, var(--paper)); }
+.cand .sym { width: 48px; height: 48px; display: grid; place-items: center; font-size: 24px; border-radius: 12px; background: var(--paper-2); border: 1px solid var(--line); }
+.cand .name { font-weight: 700; }
+.cand .party { color: var(--ink-2); font-size: 13px; }
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: grid; place-items: center; z-index: 100; }
+.modal { background: var(--paper); border-radius: 18px; padding: 22px; max-width: 480px; width: calc(100vw - 32px); box-shadow: var(--shadow-lg); }
+.receipt { background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/report/" data-i18n="nav.report">Report</a></li>
+        <li><a class="lnk" href="/pitch/" data-i18n="nav.pitch">Pitch</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main" class="wrap-narrow">
+  <div id="loading" class="muted" data-i18n="common.loading">Loading…</div>
+
+  <section id="ballot" hidden>
+    <h1 data-i18n="vote.title">Your ballot</h1>
+    <p class="muted" data-i18n="vote.sub">Pick one candidate. You cannot change your vote after submission.</p>
+    <div class="row" style="margin-bottom:14px">
+      <span class="pill"><span data-i18n="vote.constituency">Constituency</span>: <strong id="con">—</strong></span>
+      <span class="pill"><span data-i18n="vote.voter">Voter</span>: <strong id="who" class="mono">—</strong></span>
+    </div>
+    <div class="cand-grid" id="cands" role="radiogroup" aria-labelledby="ballot-h"></div>
+    <div class="row" style="margin-top:18px">
+      <button id="btn-cast" class="btn btn-green" type="button" disabled data-i18n="vote.submit">Cast my vote</button>
+    </div>
+  </section>
+
+  <section id="receipt" hidden>
+    <h1 data-i18n="vote.submitted_title">Vote recorded</h1>
+    <p class="muted" data-i18n="vote.submitted_body">Your ballot is sealed and your receipt is below. Save it to verify inclusion later.</p>
+    <div class="card" style="margin-top:14px">
+      <div class="row" style="margin-bottom:8px"><span class="tag" data-i18n="vote.ballot_id">Ballot ID</span></div>
+      <div class="receipt" id="r-id">—</div>
+      <div class="row" style="margin:14px 0 8px"><span class="tag" data-i18n="vote.merkle">Merkle root after your vote</span></div>
+      <div class="receipt" id="r-root">—</div>
+      <div class="row" style="margin:14px 0 8px"><span class="tag" data-i18n="vote.alg">Cipher</span></div>
+      <div class="receipt" id="r-alg">—</div>
+      <div class="row" style="margin:14px 0 8px"><span class="tag" data-i18n="vote.ts">Timestamp</span></div>
+      <div class="receipt" id="r-ts">—</div>
+      <div class="row" style="margin-top:18px">
+        <a class="btn btn-primary" href="/results.html" data-i18n="vote.view_results">View live results</a>
+        <a class="btn btn-ghost" href="/audit.html" data-i18n="nav.audit">Audit</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="confirm" hidden>
+    <div class="modal-bg" role="dialog" aria-modal="true" aria-labelledby="cf-title">
+      <div class="modal">
+        <h2 id="cf-title" style="margin-top:0" data-i18n="vote.confirm_title">Confirm your vote</h2>
+        <p id="cf-body">—</p>
+        <div class="row" style="justify-content:flex-end">
+          <button id="cf-no" class="btn btn-ghost" type="button" data-i18n="vote.confirm_no">Go back</button>
+          <button id="cf-yes" class="btn btn-green" type="button" data-i18n="vote.confirm_yes">Yes, cast vote</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+<script src="/js/app.js"></script>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  let me, cands = [], chosen = null;
+
+  try {
+    me = await BE.api('/api/me');
+  } catch (e) {
+    location.href = '/auth.html';
+    return;
+  }
+  $('loading').hidden = true;
+  $('ballot').hidden = false;
+  $('con').textContent = `${me.constituency_name} (${me.constituency_code})`;
+  $('who').textContent = me.voter_id;
+
+  const r = await BE.api('/api/election/candidates?constituency=' + encodeURIComponent(me.constituency_code));
+  const parties = await BE.api('/api/election/parties');
+  const partyMap = Object.fromEntries(parties.map(p => [p.id, p]));
+
+  cands = r.items;
+  const grid = $('cands');
+  for (const c of cands) {
+    const p = partyMap[c.party_id] || { name: c.party_id, color: '#666' };
+    const row = BE.el('div', {
+      class: 'cand', role: 'radio', tabindex: '0', 'aria-checked': 'false',
+      'data-id': c.id
+    },
+      BE.el('div', { class: 'sym', 'aria-hidden': 'true' }, c.symbol),
+      BE.el('div', null,
+        BE.el('div', { class: 'name' }, c.name),
+        BE.el('div', { class: 'party' }, `${p.name} · ${c.party_id}`)
+      ),
+      BE.el('div', { class: 'mono muted' }, c.id)
+    );
+    row.addEventListener('click', () => choose(c.id));
+    row.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); choose(c.id); }
+    });
+    grid.appendChild(row);
+  }
+
+  function choose(id) {
+    chosen = id;
+    document.querySelectorAll('.cand').forEach(el => el.setAttribute('aria-checked', el.dataset.id === id ? 'true' : 'false'));
+    $('btn-cast').disabled = false;
+  }
+
+  $('btn-cast').addEventListener('click', () => {
+    const c = cands.find(x => x.id === chosen);
+    const p = partyMap[c.party_id];
+    $('cf-body').textContent = BE.t('vote.confirm_body', { name: c.name, party: p ? p.name : c.party_id });
+    $('confirm').hidden = false;
+    $('cf-yes').focus();
+  });
+  $('cf-no').addEventListener('click', () => { $('confirm').hidden = true; });
+
+  $('cf-yes').addEventListener('click', async () => {
+    $('cf-yes').disabled = true;
+    try {
+      const r = await BE.api('/api/vote', { method: 'POST', body: { candidate_id: chosen } });
+      $('confirm').hidden = true;
+      $('ballot').hidden = true;
+      $('receipt').hidden = false;
+      $('r-id').textContent = r.receipt.ballot_id;
+      $('r-root').textContent = r.receipt.merkle_root;
+      $('r-alg').textContent = r.receipt.cipher_alg;
+      $('r-ts').textContent = r.receipt.timestamp;
+    } catch (e) {
+      $('cf-yes').disabled = false;
+      BE.toast(e.message, 'bad');
+    }
+  });
+})();
+</script>
+</body>
+</html>

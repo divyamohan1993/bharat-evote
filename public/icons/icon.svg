@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bharat eVote">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF9933"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset="1" stop-color="#138808"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#0B1220"/>
+  <rect x="64" y="64" width="384" height="384" rx="64" fill="url(#g)"/>
+  <circle cx="256" cy="256" r="64" fill="#000080"/>
+  <g stroke="#000080" stroke-width="6" fill="none">
+    <circle cx="256" cy="256" r="40"/>
+    <path d="M256 196 L256 316 M196 256 L316 256 M213 213 L299 299 M299 213 L213 299"/>
+  </g>
+  <path d="M150 360 L210 420 L362 268" stroke="#0B1220" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin console — Bharat eVote</title>
+<meta name="description" content="SIEM-style operational view." />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="stylesheet" href="/css/main.css" />
+<style>
+.log-line { font-family: ui-monospace, monospace; font-size: 12px; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+.log-error { background: color-mix(in srgb, var(--bad) 8%, transparent); }
+.log-warn  { background: color-mix(in srgb, var(--warn) 8%, transparent); }
+.log-info  { background: transparent; }
+.phase-pill { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-strong); cursor: pointer; background: var(--paper); }
+.phase-pill[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="tricolor" aria-hidden="true"></div>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span data-i18n="brand">Bharat eVote</span></a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a class="lnk" href="/" data-i18n="nav.home">Home</a></li>
+        <li><a class="lnk" href="/auth.html" data-i18n="nav.vote">Vote</a></li>
+        <li><a class="lnk" href="/results.html" data-i18n="nav.results">Results</a></li>
+        <li><a class="lnk" href="/audit.html" data-i18n="nav.audit">Audit</a></li>
+        <li><a class="lnk" href="/admin.html" aria-current="page" data-i18n="nav.admin">Admin</a></li>
+      </ul>
+    </nav>
+    <div class="nav-tools"><button class="lang-toggle" type="button">EN</button></div>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+  <h1 data-i18n="admin.title">Admin console</h1>
+  <p class="muted" data-i18n="admin.sub">SIEM-style operational view.</p>
+
+  <section id="login" class="card" style="max-width:520px">
+    <h2 style="margin-top:0" data-i18n="admin.token">Admin token</h2>
+    <p class="muted">Hint: paste the token from <code>/api/admin/token-hint</code> (demo only).</p>
+    <div class="field">
+      <input id="tok" class="input mono" placeholder="admin-..." />
+      <div class="row">
+        <button id="btn-login" class="btn btn-primary" type="button" data-i18n="admin.login">Sign in</button>
+        <button id="btn-hint" class="btn btn-ghost btn-sm" type="button">Reveal demo token</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="dash" hidden>
+    <div class="grid cards-4" style="margin: 14px 0 18px">
+      <div class="card"><span class="tag">Voters</span><div class="num" id="m-voters">—</div></div>
+      <div class="card"><span class="tag">Ballots</span><div class="num" id="m-ballots">—</div></div>
+      <div class="card"><span class="tag">Sessions</span><div class="num" id="m-sessions">—</div></div>
+      <div class="card"><span class="tag">Audit size</span><div class="num" id="m-audit">—</div></div>
+    </div>
+
+    <section class="card" style="margin-bottom: 14px">
+      <h2 style="margin-top:0" data-i18n="admin.phase">Election phase</h2>
+      <div class="row" id="phase-row">
+        <button class="phase-pill" data-p="setup">setup</button>
+        <button class="phase-pill" data-p="live">live</button>
+        <button class="phase-pill" data-p="closed">closed</button>
+        <span class="muted">Current: <strong id="cur-phase">—</strong></span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="logs-h">
+      <div class="between" style="margin-bottom:10px">
+        <h2 id="logs-h" style="margin:0" data-i18n="admin.logs">Live logs</h2>
+        <div class="row">
+          <select id="lvl" class="select" style="max-width:160px">
+            <option value="">All levels</option>
+            <option value="error">error</option>
+            <option value="warn">warn</option>
+            <option value="info">info</option>
+          </select>
+          <button id="btn-pause" class="btn btn-ghost btn-sm" type="button">Pause</button>
+        </div>
+      </div>
+      <div id="logs" style="max-height:60vh; overflow:auto"></div>
+    </section>
+  </section>
+</main>
+
+<footer><div class="wrap"><div data-i18n="common.by">—</div><div class="muted" data-i18n="common.powered">—</div></div></footer>
+<script src="/js/app.js"></script>
+<script>
+let paused = false;
+const $ = (id) => document.getElementById(id);
+
+$('btn-hint').addEventListener('click', async () => {
+  const r = await fetch('/api/admin/token-hint').then(x => x.json());
+  $('tok').value = r.token;
+});
+
+$('btn-login').addEventListener('click', async () => {
+  try {
+    await BE.api('/api/admin/login', { method: 'POST', body: { token: $('tok').value } });
+    $('login').hidden = true;
+    $('dash').hidden = false;
+    refreshAll();
+    setInterval(() => { if (!paused) refreshAll(); }, 3000);
+  } catch (e) { BE.toast(e.message, 'bad'); }
+});
+
+document.querySelectorAll('.phase-pill').forEach(b => {
+  b.addEventListener('click', async () => {
+    try {
+      const r = await BE.api('/api/admin/phase', { method: 'POST', body: { phase: b.dataset.p } });
+      $('cur-phase').textContent = r.phase;
+      document.querySelectorAll('.phase-pill').forEach(x => x.setAttribute('aria-pressed', x.dataset.p === r.phase ? 'true' : 'false'));
+    } catch (e) { BE.toast(e.message, 'bad'); }
+  });
+});
+
+$('btn-pause').addEventListener('click', () => {
+  paused = !paused;
+  $('btn-pause').textContent = paused ? 'Resume' : 'Pause';
+});
+
+async function refreshAll() {
+  try {
+    const [s, l] = await Promise.all([
+      BE.api('/api/admin/stats'),
+      BE.api('/api/admin/logs?n=200' + ($('lvl').value ? `&level=${$('lvl').value}` : ''))
+    ]);
+    $('m-voters').textContent = BE.fmtInt(s.voters);
+    $('m-ballots').textContent = BE.fmtInt(s.ballots);
+    $('m-sessions').textContent = BE.fmtInt(s.sessions);
+    $('m-audit').textContent = BE.fmtInt(s.audit_size);
+    $('cur-phase').textContent = s.election.phase;
+    document.querySelectorAll('.phase-pill').forEach(x => x.setAttribute('aria-pressed', x.dataset.p === s.election.phase ? 'true' : 'false'));
+
+    const box = $('logs');
+    box.replaceChildren();
+    for (const r of l.items) {
+      const cls = r.level === 'error' ? 'log-error' : r.level === 'warn' ? 'log-warn' : 'log-info';
+      box.append(BE.el('div', { class: 'log-line ' + cls },
+        `[${r.ts}] ${r.level.toUpperCase()} ${r.msg} ${JSON.stringify({ ...r, ts: undefined, level: undefined, msg: undefined, pid: undefined })}`
+      ));
+    }
+  } catch (e) { /* silent */ }
+}
+</script>
+</body>
+</html>
