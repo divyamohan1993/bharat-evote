@@ -1,8 +1,8 @@
 # Bharat eVote — Online Voting System for Indian Elections
 
-> 🇮🇳 **Live demo:** https://bharat-evote-107722137045.asia-east1.run.app
-> 🎤 **Pitch deck:** https://bharat-evote-107722137045.asia-east1.run.app/pitch/
-> 📄 **Report:** https://bharat-evote-107722137045.asia-east1.run.app/report/
+> 🇮🇳 **Live demo:** https://bharat-evote.dmj.one
+> 🎤 **Pitch deck:** https://bharat-evote.dmj.one/pitch/
+> 📄 **Report:** https://bharat-evote.dmj.one/report/
 >
 > Capstone project of **Ankit Saini** (Reg. **GF202215717**), B.Tech CSE (Data Science),
 > Yogananda School of AI, Computers and Data Sciences,
@@ -45,6 +45,14 @@ gcloud run deploy bharat-evote \
   --min-instances 0 --max-instances 10 \
   --concurrency 80 --cpu 1 --memory 512Mi \
   --allow-unauthenticated
+```
+
+The production service is also mapped to the custom domain `bharat-evote.dmj.one`:
+```bash
+gcloud beta run domain-mappings create \
+  --service bharat-evote --domain bharat-evote.dmj.one \
+  --region asia-east1 --project dmjone
+# Then add CNAME bharat-evote → ghs.googlehosted.com on Cloudflare (DNS-only, grey cloud).
 ```
 
 The provided `scripts/deploy.sh` wraps the same command and prints the public URL.

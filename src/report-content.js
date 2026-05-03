@@ -12,7 +12,7 @@ export const reportMeta = {
   institution: 'Yogananda School of AI, Computers and Data Sciences',
   university: 'Shoolini University of Biotechnology and Management Sciences, Solan, H.P., India',
   submitted_on: 'May 2026',
-  liveUrl: process.env.PUBLIC_URL || 'https://bharat-evote-asia-east1.run.app'
+  liveUrl: process.env.PUBLIC_URL || 'https://bharat-evote.dmj.one'
 };
 
 export const reportSections = [
