@@ -7,7 +7,7 @@
 > Capstone project of **Ankit Saini** (Reg. **GF202215717**), B.Tech CSE (Data Science),
 > Yogananda School of AI, Computers and Data Sciences,
 > Shoolini University of Biotechnology and Management Sciences, Solan, H.P., India.
-> Mentored by [dmj.one](https://dmj.one).
+> Capstone Mentor: **Ms Ishani Sharma**.
 
 A remote, auditable, accessible voting system for Indian elections. Every part of
 the deliverable — the live application, the cryptographic audit log, the
@@ -103,5 +103,5 @@ MIT — see [LICENSE](LICENSE).
 
 - Election Commission of India — public reference materials on Indian electoral procedure
 - The open-source community whose libraries and standards underpin this work
-- [dmj.one](https://dmj.one) — industrial mentor
+- **Ms Ishani Sharma** — Capstone Mentor, for sustained guidance and review at every stage
 - Faculty of Yogananda School of AI, Computers and Data Sciences, Shoolini University

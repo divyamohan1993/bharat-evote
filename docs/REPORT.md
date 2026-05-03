@@ -8,7 +8,7 @@ Synopsis submitted for the partial fulfilment of the degree of
 - **Registration Number:** GF202215717
 - **Course with Specialization:** B.Tech CSE (Data Science)
 - **Semester:** VIII
-- **Capstone Mentor:** dmj.one (industrial mentor)
+- **Capstone Mentor:** Ms Ishani Sharma
 - **School:** Yogananda School of AI, Computers and Data Sciences
 - **University:** Shoolini University of Biotechnology and Management Sciences, Solan, H.P., India
 - **Submitted:** May 2026
@@ -17,7 +17,7 @@ Synopsis submitted for the partial fulfilment of the degree of
 
 ## Acknowledgement
 
-I extend my sincere gratitude to my Capstone Mentor at dmj.one for sustained, hands-on guidance through architecture, security, and deployment decisions. I thank the faculty of Yogananda School of AI, Computers and Data Sciences at Shoolini University for the academic foundation that made this project possible. I also acknowledge the Election Commission of India for publicly available reference materials on Indian electoral procedures, the open-source community whose libraries and standards underpin this work, and my family and peers for their patience and feedback during the development cycle.
+I extend my sincere gratitude to my Capstone Mentor, Ms Ishani Sharma, for her sustained guidance, careful review and constructive feedback at every stage of this project — from problem framing through architecture, security review and deployment. I thank the faculty of Yogananda School of AI, Computers and Data Sciences at Shoolini University for the academic foundation that made this project possible. I also acknowledge the Election Commission of India for publicly available reference materials on Indian electoral procedures, the open-source community whose libraries and standards underpin this work, and my family and peers for their patience and feedback during the development cycle.
 
 
 ## Abstract
